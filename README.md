@@ -59,14 +59,10 @@ This project demonstrates how AWS native services can be used to automatically c
 10. Project Conclusion
 
 
-
-
-
-
 ## 🗜 1A. Detection Source & Prep
 
 🔷 _step 1_
-#### Created a S3 Bucket to store CloudTrail Logs
+### Created a S3 Bucket to store CloudTrail Logs
 
 🧰  S3 Bucket Configurations
 
@@ -88,7 +84,7 @@ This project demonstrates how AWS native services can be used to automatically c
 
 📌 Logs are stored in the Amazon S3 bucket for audit purposes and streamed to CloudWatch Logs for real-time security detection.
 
-🧰  CloudTrail Configurations
+### 🧰  CloudTrail Configurations
 
 ✔ Enable: Apply trail to all regions
 
@@ -105,7 +101,7 @@ This project demonstrates how AWS native services can be used to automatically c
 <img width="1344" height="560" alt="image" src="https://github.com/user-attachments/assets/004bb1ec-ff4a-4897-8c96-8765b8363ebb" />
 
 
-✅ Verification 
+## ✅ Verification 
 
 ✔ Logging: ON
 
@@ -159,22 +155,70 @@ Security events originate from:
 
 ### Created a CloudWatch Metric Filter to capture all unauthorised IAM activities
 
-Pattern { ($.errorCode = "AccessDenied") && ($.eventSource = "iam.amazonaws.com") }
+<img width="1137" height="599" alt="image" src="https://github.com/user-attachments/assets/446a2bf7-6dea-4b02-91e1-5f3d72b67a3d" />
 
+### I Created an Alarm for the filter i made and also Configured SNS Alert (This sends notification to my email)
 
+✔ _SNS Configuration_ 
 
+<img width="1347" height="562" alt="image" src="https://github.com/user-attachments/assets/e7a2377c-5e98-4b59-8c28-133fde340d4c" />
+
+✔ _Alarm Created_
+
+<img width="1297" height="531" alt="image" src="https://github.com/user-attachments/assets/af4fc02d-1c6b-4a79-833f-62e5aaff67e9" />
+
+## ✅ Verification
+
+📌 Note: In other to trigger alarm, i created a low priviledge user and performed some IAM activity. (This is to confirm that everything works)
+
+- ✔ SNS Eamil received
+
+<img width="626" height="1280" alt="image" src="https://github.com/user-attachments/assets/b4255a14-949a-444f-a00a-a78ca6a087de" />
+
+- ✔ CloudWatch Alarm triggered
+  
+<img width="865" height="566" alt="image" src="https://github.com/user-attachments/assets/6c6c8a0d-3cc0-48df-81fa-d65e96d83dcd" />
+
+- ✔ CloudWatch Metrics confrimed (Everything wroks fine)
+  
+<img width="1276" height="565" alt="image" src="https://github.com/user-attachments/assets/643b011d-de76-4285-b25a-c393dab47601" />
+
+## 1C I Integrated GuardDuty to automatically identify malicious activity using AWS threat intelligence and ML
+
+📌 Note: Amazon GuardDuty was enabled to provide managed threat detection using AWS machine learning and threat intelligence. GuardDuty complements custom CloudTrail-based detections by identifying suspicious behavior without manual rule creation.
+
+✔ GuardDuty enabled
+
+<img width="1332" height="586" alt="image" src="https://github.com/user-attachments/assets/499d0a2a-3ce7-417b-b237-9d2103146159" />
 
 
 
 ## 🗜 2. Event Routing (EventBridge)
 
+### 📌Purpose: Automatically route GuardDuty high-severity findings to the response engine (Lambda) for real-time action.
+
+### Flow       🔽
+
 Amazon EventBridge listens for:
 
-CloudWatch alarms entering ALARM state
+- CloudWatch alarms entering ALARM state
 
-GuardDuty findings with severity ≥ Medium
+- GuardDuty findings with severity ≥ Medium
 
-EventBridge acts as the central event router.
+- EventBridge acts as the central event router.
+
+
+###  (AWS Lambda function) I created Lambda function to the targert in the event bridge configuration
+
+✔ Event bridge created and a Lambda Fuction set as the target with a role assigned
+
+📌 Notes: Event pattern shows souce as aws.guardduty which means it only capture GuardDuty findings.  >= 5 means medium to high severity (severity ranges from 0 - 8)
+
+<img width="1313" height="565" alt="image" src="https://github.com/user-attachments/assets/229a8ab0-2c28-4ea2-97cb-fc819d18d319"/>
+  
+<img width="1316" height="540" alt="image" src="https://github.com/user-attachments/assets/0af262ca-401b-487c-b46e-7f20123104c9" />
+
+
 
 ## 🗜 3. Automated Response Engine (Lambda)
 
@@ -186,7 +230,14 @@ Attaching a restrictive IAM policy
 
 Logging incident metadata
 
-⚠️ No destructive actions (no deletes) — SOC-safe automation.
+
+
+
+
+
+
+
+
 
 ## 🗜 4. Notification & Visibility
 
