@@ -22,11 +22,15 @@ This project demonstrates how AWS native services can be used to automatically c
 
 ✔ Amazon EventBridge
 
+✔ Amazon GuardDuty
+
 ✔ AWS Lambda
 
 ✔ AWS Identity and Access Management (IAM)
 
 ✔ Amazon SNS
+
+
 
 
 ## 🗜 Architecture Overview
@@ -105,8 +109,6 @@ This project demonstrates how AWS native services can be used to automatically c
 
 ✔ Logging: ON
 
-✔ Multi-region: YES
-
 ✔ S3 bucket begins receiving logs : Trail log location
 security-cloudtrail-logs01/AWSLogs/o-z96jg5oz46/766593778503 
 
@@ -149,7 +151,7 @@ Security events originate from:
 - Reconnaissance attempts 
   
 
-## 🔍 Selected Incident: Unauthorized IAM Activity
+## 🔍 Unauthorized IAM Activity
 
 🔷 _step 1_
 
@@ -167,6 +169,7 @@ Security events originate from:
 
 <img width="1297" height="531" alt="image" src="https://github.com/user-attachments/assets/af4fc02d-1c6b-4a79-833f-62e5aaff67e9" />
 
+
 ## ✅ Verification
 
 📌 Note: In other to trigger alarm, i created a low priviledge user and performed some IAM activity. (This is to confirm that everything works)
@@ -183,6 +186,7 @@ Security events originate from:
   
 <img width="1276" height="565" alt="image" src="https://github.com/user-attachments/assets/643b011d-de76-4285-b25a-c393dab47601" />
 
+
 ## 1C I Integrated GuardDuty to automatically identify malicious activity using AWS threat intelligence and ML
 
 📌 Note: Amazon GuardDuty was enabled to provide managed threat detection using AWS machine learning and threat intelligence. GuardDuty complements custom CloudTrail-based detections by identifying suspicious behavior without manual rule creation.
@@ -195,7 +199,7 @@ Security events originate from:
 
 ## 🗜 2. Event Routing (EventBridge)
 
-### 📌Purpose: Automatically route GuardDuty high-severity findings to the response engine (Lambda) for real-time action.
+### 📌 Purpose: Automatically route GuardDuty high-severity findings to the response engine (Lambda) for real-time action.
 
 ### Flow       🔽
 
@@ -205,19 +209,41 @@ Amazon EventBridge listens for:
 
 - GuardDuty findings with severity ≥ Medium
 
-- EventBridge acts as the central event router.
+  EventBridge acts as the central event router.
 
 
-###  (AWS Lambda function) I created Lambda function to the targert in the event bridge configuration
+###  (AWS Lambda function) I created Lambda function to be the targert in the event bridge configuration
 
 ✔ Event bridge created and a Lambda Fuction set as the target with a role assigned
 
 📌 Notes: Event pattern shows souce as aws.guardduty which means it only capture GuardDuty findings.  >= 5 means medium to high severity (severity ranges from 0 - 8)
 
 <img width="1313" height="565" alt="image" src="https://github.com/user-attachments/assets/229a8ab0-2c28-4ea2-97cb-fc819d18d319"/>
+
+
+## ✅ Verification
+
+📌 Note: I generated GuardDuty sample findings to validate end-to-end event routing and Lambda invocation.
+
+✔  Verified GuardDuty Findings
+
+<img width="1322" height="570" alt="image" src="https://github.com/user-attachments/assets/8fd26f73-daf2-4f06-87fd-f206877d7f1d" />
+
+
+✔ Verified EventBridge Rule Matches
   
 <img width="1316" height="540" alt="image" src="https://github.com/user-attachments/assets/0af262ca-401b-487c-b46e-7f20123104c9" />
 
+📌 #### Troubleshooting
+
+During validation, I used Lambda manual invocation to confirm logging functionality. Earlier EventBridge-triggered invocations executed a previous Lambda version before code deployment, resulting in system logs only. Redeploying the function resolved the issue.
+
+<img width="1279" height="549" alt="image" src="https://github.com/user-attachments/assets/734baa4e-aff1-4adb-9c53-0f228a105a8a" />
+
+
+✔ Verified Lambda Invocation works (Everything works)
+
+<img width="1341" height="615" alt="image" src="https://github.com/user-attachments/assets/7247ae5f-747d-4364-a1ba-078dc52a4bfd" />
 
 
 ## 🗜 3. Automated Response Engine (Lambda)
