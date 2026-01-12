@@ -3,7 +3,7 @@
   <img src="https://hawk-eye.io/wp-content/uploads/2024/02/SOAR-Features.jpg" width="150">
 </p>
 
-<h1 align="center"> AWS Automated Incident Response (SOAR Fundamentals)
+<h1 align="center"> AWS Automated Incident Response 
 </h1>
 
 <p align="center">
@@ -248,13 +248,39 @@ During validation, I used Lambda manual invocation to confirm logging functional
 
 ## 🗜 3. Automated Response Engine (Lambda)
 
-AWS Lambda executes response actions such as:
+### Flow 🔽
 
-Disabling an IAM access key
+Security events originate from:
 
-Attaching a restrictive IAM policy
+GuardDuty Findings (severity >= Medium)
 
-Logging incident metadata
+  🔽 Routed by
+
+Amazon EventBridge
+
+ 🔽  Trigger
+
+AWS Lambda (Automated Response Engine)
+
+ 🔽  Response
+
+Attach restrictive IAM policy
+
+Log incident
+
+
+🔷 _step 1_
+
+Created a Restrictive IAM Policy
+
+📌 Purpose: Limit IAM user activity without deleting access.
+
+<img width="1321" height="575" alt="image" src="https://github.com/user-attachments/assets/9225f996-7f1d-4ba3-8b26-40f121f4ad44" />
+
+
+
+
+
 
 
 
