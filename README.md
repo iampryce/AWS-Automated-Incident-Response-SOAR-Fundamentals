@@ -66,6 +66,7 @@ This project demonstrates how AWS native services can be used to automatically c
 ## 🗜 1A. Detection Source & Prep
 
 🔷 _step 1_
+
 ### Created a S3 Bucket to store CloudTrail Logs
 
 🧰  S3 Bucket Configurations
@@ -131,7 +132,6 @@ security-cloudtrail-logs01/AWSLogs/o-z96jg5oz46/766593778503
 
 
 
-
 ## 1B Detection Rule: Unauthorized API Calls 
 
 ### Flow       🔽
@@ -142,7 +142,7 @@ Security events originate from:
 
 - GuardDuty Findings (managed threat detection)
 
-### 📌Purpose: identify suspicious behavior such as:
+### 📌 Purpose: identify suspicious behavior such as:
 
 - Unauthorized IAM activity
 
@@ -234,7 +234,7 @@ Amazon EventBridge listens for:
   
 <img width="1316" height="540" alt="image" src="https://github.com/user-attachments/assets/0af262ca-401b-487c-b46e-7f20123104c9" />
 
-📌 #### Troubleshooting
+📌 #### Troubleshooting 1
 
 During validation, I used Lambda manual invocation to confirm logging functionality. Earlier EventBridge-triggered invocations executed a previous Lambda version before code deployment, resulting in system logs only. Redeploying the function resolved the issue.
 
@@ -248,13 +248,35 @@ During validation, I used Lambda manual invocation to confirm logging functional
 
 ## 🗜 3. Automated Response Engine (Lambda)
 
+📌 #### Troubleshooting 2
+
+Guard duty did not display IAM Username
+
+🚨 Reasons
+
+Most GuardDuty findings DO NOT include an IAM username
+
+🔁 Found out i have to use CloudTrail-based detection for IAM identity Not GuardDuty.
+
+
+
 ### Flow 🔽
 
 Security events originate from:
 
-GuardDuty Findings (severity >= Medium)
+CloudTrail logs
 
-  🔽 Routed by
+AccessDenied API calls
+
+ 🔽  Detected by
+
+CloudWatch Metric Filter
+
+ 🔽  Alarm triggers
+
+CloudWatch Alarm
+
+ 🔽 Routed via
 
 Amazon EventBridge
 
@@ -262,32 +284,54 @@ Amazon EventBridge
 
 AWS Lambda (Automated Response Engine)
 
- 🔽  Response
+ 🔽 Action
 
-Attach restrictive IAM policy
+AWS Lambda Attach Temporary Containment Policy
 
-Log incident
+Logs incident data
 
 
 🔷 _step 1_
 
 Created a Restrictive IAM Policy
 
-📌 Purpose: Limit IAM user activity without deleting access.
+📌 Purpose: Limits IAM user activity.
 
 <img width="1321" height="575" alt="image" src="https://github.com/user-attachments/assets/9225f996-7f1d-4ba3-8b26-40f121f4ad44" />
 
 
+🔷 _step 2_
+
+Updated Lambda Execution Role and attached IAMFullAccess. This allows Lambda function to detect unauthorized IAM activity and automatically attach a restrictive policy to contain the incident.
+
+📌 Note: IAMFullAcess allows Lambda to identify an IAM user and attach a policy to that user.
+
+<img width="1326" height="636" alt="image" src="https://github.com/user-attachments/assets/59c59553-c1f5-42c6-839a-ee2374951f56" />
+
+🔷 _step 3_
+
+Updated the EventBridge rule to set cloudwatch as the source, this changes the setup from the initial source which was GuardDuty.
+
+Updated the event filter 
+
+<img width="1347" height="626" alt="image" src="https://github.com/user-attachments/assets/dc983cc2-cc3c-4af2-80d8-0798cb8ed177" />
+
+🔷 _step 4_
+
+Updated Lambda Code for containment
+
+_📌 Note: This code was generated with AI_  
+
+
+<img width="1326" height="641" alt="image" src="https://github.com/user-attachments/assets/59fce0d4-f323-4e71-bb7a-63ee0531ae52" />
 
 
 
 
 
+✅ Test: Unauthorized IAM Action
 
-
-
-
-
+📌 Note: In other to trigger alarm, i used a low priviledge user and performed some IAM activity. (This is to confirm that everything works)
 
 
 
