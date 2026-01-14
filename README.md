@@ -288,7 +288,7 @@ AWS Lambda (Automated Response Engine)
 
  🔽 Action
 
-AWS Lambda Attach Temporary Containment Policy
+Disables USER access key 
 
 Logs incident data
 
@@ -351,9 +351,12 @@ CloudWatch Logs
 
 Receives raw log messages from services like Lambda, VPC Flow Logs, or CloudTrail if you forward them
 
-It does not automatically parse user info unless you specifically include it in the logs
+Also i had 2 EventBridge rule enable  for the same lambda so it's clashing
 
-Example: if you just log the CloudTrail event in Lambda, you need to access the userIdentity field yourself
+
+
+ 
+
 
 
 
@@ -376,6 +379,17 @@ AWS Lambda
 
 Extract IAM user 
 
+🔽
+
+Lambda disables the user’s access key
+
+ 🔽
+ 
+SNS notifies SOC
+
+ 🔽
+ 
+All actions logged for audit
 
 🔷 _step 1_
 
@@ -383,32 +397,47 @@ Created an EventBridge Rule (CloudTrail API Events)
 
 In this case EventBridge will route CloudTrail API event to the targert Lambda while Lambda function get triggered.
 
-<img width="1352" height="653" alt="image" src="https://github.com/user-attachments/assets/9a14f815-6169-4d99-83a9-95a9213a99a8" />
+<img width="1319" height="597" alt="image" src="https://github.com/user-attachments/assets/390f6a1c-a77a-423f-b4d8-06fa0eea8b85" />
 
 
  <br/>
 
-****
-
 
 🔷 _step 2_
 
-Updated Lambda function code 
+Updated Lambda function code to disable user access key
 
-<img width="1354" height="645" alt="image" src="https://github.com/user-attachments/assets/85d3cdd6-0e68-4984-b551-1b0daccf02f2" />
+<img width="1344" height="626" alt="image" src="https://github.com/user-attachments/assets/85d1e270-07fb-4999-a7c2-8f557f5ae6e8" />
 
 
+
+
+
+🔷 _step 3_
 
 
 ## ✅ Verification
 
-✅ Test: Unauthorized IAM Action
+### ✅ Test 1: Unauthorized IAM Action ( Extracted IAM user )
+
+<img width="1302" height="639" alt="image" src="https://github.com/user-attachments/assets/d80954c1-ba17-484b-9a02-858e9649eb60" />
 
 
-<img width="1342" height="625" alt="image" src="https://github.com/user-attachments/assets/e5890eed-7e9e-49fd-9af0-1df679aad9c8" />
+<br/>
 
 
+### ✅ Test 2: Unauthorized IAM Action ( Extracted IAM user )
 
+<img width="1366" height="556" alt="image" src="https://github.com/user-attachments/assets/73f96ca0-1e67-4ab9-9300-ac701215fc11" />
+
+
+<img width="1318" height="599" alt="image" src="https://github.com/user-attachments/assets/03ca894e-75a0-4cbe-a765-66fbf4f0a06b" />
+
+## ✅  Final verification
+
+CloudWatch logs confirms the user and name.
+
+<img width="1338" height="603" alt="image" src="https://github.com/user-attachments/assets/2833d6c5-7f33-47c5-af95-ad505e9ecf9b" />
 
 
 
@@ -429,11 +458,12 @@ Which resource was affected
 
 What action was automatically taken
 
-## 🗜 5. Logging & Audit
+### ✅
 
-All actions are logged to:
 
-CloudWatch Logs
 
-CloudTrail for compliance and audit
+![photo_2026-01-14_14-09-11](https://github.com/user-attachments/assets/64a744cc-0e8c-4ce5-9791-509008515e82)
+
+
+
 
