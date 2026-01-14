@@ -45,22 +45,20 @@ This project demonstrates how AWS native services can be used to automatically c
 
 5. All actions are logged for audit and review
 
-  
-<img width="1160" height="583" alt="image" src="https://github.com/user-attachments/assets/3d8c5a86-22b3-41e8-92da-58a418ccc200" /> <br/>
+<img width="3796" height="1960" alt="Main drawio" src="https://github.com/user-attachments/assets/9ae8805c-c1b5-410c-a565-65d4b03bbfb9" />
+
+
 
 
 ## 📚 Table of Contents
 
 1. [Project Overview](#project-overview)
 2. [Architecture Design](#-architecture-overview)
-3. Detection Trigger Selection   
-4. SNS Notification Setup
-5. IAM Role for Automated Response
-6. Lambda Response Function
-7. EventBridge Integration
-8. Response Testing & Validation
-9. Cost Control & Service Shutdown
-10. Project Conclusion
+3. [Detection Trigger Selection](#-1a-detection-source--prep)
+4. [Lambda Response Function](#-3-automated-response-engine-lambda)
+5.  [EventBridge Integration](#-2-event-routing-eventbridge)
+6.  [ Response Testing & Verification](#-solution-source-chatgpt)
+7. [Project Conclusion](#-conclusion)
 
 
 ## 🗜 1A. Detection Source & Prep
@@ -435,7 +433,7 @@ Updated Lambda function code to disable user access key
 
 ## ✅  Final verification
 
-CloudWatch logs confirms the user and name.
+CloudWatch logs confirms the USER and includes name. 
 
 <img width="1338" height="603" alt="image" src="https://github.com/user-attachments/assets/2833d6c5-7f33-47c5-af95-ad505e9ecf9b" />
 
@@ -446,9 +444,7 @@ CloudWatch logs confirms the user and name.
 
 Amazon SNS sends alerts to:
 
-SOC email
-
-Slack / ticketing (optional extension)
+Email
 
 Alerts include:
 
@@ -456,14 +452,24 @@ What happened
 
 Which resource was affected
 
-What action was automatically taken
-
 ### ✅
-
 
 
 ![photo_2026-01-14_14-09-11](https://github.com/user-attachments/assets/64a744cc-0e8c-4ce5-9791-509008515e82)
 
 
+## 🔥 Conclusion
+
+“CloudWatch logs now include username but it said no user access key found”
+
+This tells us 3 critical things:
+
+EventBridge → Lambda	✅ Working
+
+Lambda parsing CloudTrail	✅ Correct
+
+Username detection	✅ SUCCESS
+
+Access key detection	⚠️ Conditional (not always present) 
 
 
